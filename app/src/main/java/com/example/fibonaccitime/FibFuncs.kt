@@ -13,9 +13,10 @@ fun fibonacciConvert(input:Int):IntArray
             break;
         }
 
-        if (output > FIB_SEQUENCE[i]) {
+        if (output >= FIB_SEQUENCE[i]) {
             timeDisplay[i] = 1
             output -= FIB_SEQUENCE[i]
+            if (output==0) break
         }
 
         i--;
