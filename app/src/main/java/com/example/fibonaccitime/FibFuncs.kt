@@ -1,16 +1,16 @@
 package com.example.fibonaccitime
 
-val FIB_SEQUENCE: IntArray = intArrayOf(1,1,2,3,5,8,13,21,34)
+//val FIB_SEQUENCE_old: IntArray = intArrayOf(1,1,2,3,5,8,13,21,34)
+val FIB_SEQUENCE: IntArray = intArrayOf(34,21,13,8,5,3,2,1,1)
 
-fun fibonacciConvert(input:Int):IntArray
-{
+fun fibonacciConvert(input:Int):IntArray {
     var output = input
     var timeDisplay:IntArray = intArrayOf(0,0,0,0,0,0,0,0,0)
-    var i:Int = FIB_SEQUENCE.size-1
-    while(i >= 0) {
+    var i = 0
+    while(i < FIB_SEQUENCE.size) {
         if(output == 1) {
-            timeDisplay[0] = 1
-            break;
+            timeDisplay[FIB_SEQUENCE.size-1] = 1
+            break
         }
 
         if (output >= FIB_SEQUENCE[i]) {
@@ -19,7 +19,7 @@ fun fibonacciConvert(input:Int):IntArray
             if (output==0) break
         }
 
-        i--;
+        i++;
     }
     return timeDisplay
 }

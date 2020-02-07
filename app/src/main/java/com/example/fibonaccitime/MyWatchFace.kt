@@ -99,6 +99,7 @@ class MyWatchFace : CanvasWatchFaceService() {
         private var mWatchHandHighlightColor: Int = 0
         private var mWatchHandShadowColor: Int = 0
 
+        private lateinit var mCircles: Array<CircleDef>
         private lateinit var mHourPaint: Paint
         private lateinit var mMinutePaint: Paint
         private lateinit var mSecondPaint: Paint
@@ -132,12 +133,27 @@ class MyWatchFace : CanvasWatchFaceService() {
 
             mCalendar = Calendar.getInstance()
 
-            initializeBackground()
+            //initializeBackground()
+            initializeCircles()
             initializeWatchFace()
         }
 
+        private fun initializeCircles() {
+            mCircles = arrayOf(
+                CircleDef(195f,195f,195f),
+                CircleDef(194.32f, 120.19f, 120.19f),
+                CircleDef(241.715f,121.755f, 72.335f),
+                CircleDef(240.15f, 148.49f, 46.05f),
+                CircleDef(223.305f, 149.165f, 29.205f),
+                CircleDef(223.075f,137.255f, 16.845f),
+                CircleDef(229.815f, 138.605f, 10.105f),
+                CircleDef(228f,142f, 6f),
+                CircleDef(233f,136f,6f)
+            )
+        }
+
         private fun initializeBackground() {
-            mBackgroundPaint = Paint().apply {
+            /*mBackgroundPaint = Paint().apply {
                 color = Color.BLACK
             }
             mBackgroundBitmap = BitmapFactory.decodeResource(resources, R.drawable.bg)
@@ -150,10 +166,13 @@ class MyWatchFace : CanvasWatchFaceService() {
                     mWatchHandShadowColor = it.getDarkMutedColor(Color.BLACK)
                     updateWatchHandStyle()
                 }
-            }
+            }*/
         }
 
         private fun initializeWatchFace() {
+
+            //initializeCircles()
+
             /* Set defaults for colors */
             mWatchHandColor = Color.WHITE
             mWatchHandHighlightColor = Color.RED
@@ -307,7 +326,7 @@ class MyWatchFace : CanvasWatchFaceService() {
 
 
             /* Scale loaded background image (more efficient) if surface dimensions change. */
-            val scale = width.toFloat() / mBackgroundBitmap.width.toFloat()
+/*            val scale = width.toFloat() / mBackgroundBitmap.width.toFloat()
 
             mBackgroundBitmap = Bitmap.createScaledBitmap(mBackgroundBitmap,
                     (mBackgroundBitmap.width * scale).toInt(),
@@ -325,11 +344,11 @@ class MyWatchFace : CanvasWatchFaceService() {
              */
             if (!mBurnInProtection && !mLowBitAmbient) {
                 initGrayBackgroundBitmap()
-            }
+            }*/
         }
 
         private fun initGrayBackgroundBitmap() {
-            mGrayBackgroundBitmap = Bitmap.createBitmap(
+            /*mGrayBackgroundBitmap = Bitmap.createBitmap(
                     mBackgroundBitmap.width,
                     mBackgroundBitmap.height,
                     Bitmap.Config.ARGB_8888)
@@ -339,7 +358,7 @@ class MyWatchFace : CanvasWatchFaceService() {
             colorMatrix.setSaturation(0f)
             val filter = ColorMatrixColorFilter(colorMatrix)
             grayPaint.colorFilter = filter
-            canvas.drawBitmap(mBackgroundBitmap, 0f, 0f, grayPaint)
+            canvas.drawBitmap(mBackgroundBitmap, 0f, 0f, grayPaint)*/
         }
 
         /**
@@ -376,13 +395,18 @@ class MyWatchFace : CanvasWatchFaceService() {
 
         private fun drawBackground(canvas: Canvas) {
 
-            if (mAmbient && (mLowBitAmbient || mBurnInProtection)) {
+            /*if (mAmbient && (mLowBitAmbient || mBurnInProtection)) {
                 canvas.drawColor(Color.BLACK)
             } else if (mAmbient) {
                 canvas.drawBitmap(mGrayBackgroundBitmap, 0f, 0f, mBackgroundPaint)
             } else {
                 canvas.drawBitmap(mBackgroundBitmap, 0f, 0f, mBackgroundPaint)
-            }
+            }*/
+
+            /*for (circle in mCircles) {
+                circle.drawCircle(canvas)
+            }*/
+
         }
 
         private fun drawWatchFace(canvas: Canvas) {
@@ -408,18 +432,18 @@ class MyWatchFace : CanvasWatchFaceService() {
              * These calculations reflect the rotation in degrees per unit of time, e.g.,
              * 360 / 60 = 6 and 360 / 12 = 30.
              */
-            val seconds =
+            /*val seconds =
                     mCalendar.get(Calendar.SECOND) + mCalendar.get(Calendar.MILLISECOND) / 1000f
             val secondsRotation = seconds * 6f
 
             val minutesRotation = mCalendar.get(Calendar.MINUTE) * 6f
 
             val hourHandOffset = mCalendar.get(Calendar.MINUTE) / 2f
-            val hoursRotation = mCalendar.get(Calendar.HOUR) * 30 + hourHandOffset
+            val hoursRotation = mCalendar.get(Calendar.HOUR) * 30 + hourHandOffset*/
 
             //Fib map
 
-            var hour = mCalendar.get(Calendar.HOUR)
+            var hour = mCalendar.get(Calendar.HOUR_OF_DAY)
             var min = mCalendar.get(Calendar.MINUTE)
             var hourFibMap:IntArray = fibonacciConvert(hour)
             var hourString = hour.toString() + ":" +fibonacciString(hourFibMap)
@@ -427,6 +451,12 @@ class MyWatchFace : CanvasWatchFaceService() {
             var minuteString = min.toString() + ":" + fibonacciString(minFibMap)
 
 
+            var i:Int = 0
+            for (circle in mCircles) {
+                circle.setColour(hourFibMap[i], minFibMap[i])
+                circle.drawCircle(canvas)
+                i++
+            }
 
             /*
              * Save the canvas state before we can begin to rotate it.
@@ -463,10 +493,10 @@ class MyWatchFace : CanvasWatchFaceService() {
 
                     var currentTimeString:String = String.format("%s:%s:%s", hourString, minuteString, secondString)
                     canvas.drawText(currentTimeString, 195f,195f, mTextPaint)
-                } else {
+                } /*else {
                     canvas.drawText(hourString, 195f, 195 - 25f, mTextPaint)
                     canvas.drawText(minuteString, 195f, 195 + 25f, mTextPaint)
-                }
+                }*/
                /* canvas.rotate(secondsRotation - minutesRotation, mCenterX, mCenterY)
                 canvas.drawLine(
                         mCenterX,
