@@ -411,38 +411,7 @@ class MyWatchFace : CanvasWatchFaceService() {
 
         private fun drawWatchFace(canvas: Canvas) {
 
-            /*
-             * Draw ticks. Usually you will want to bake this directly into the photo, but in
-             * cases where you want to allow users to select their own photos, this dynamically
-             * creates them on top of the photo.
-             */
-            /*val innerTickRadius = mCenterX - 10
-            val outerTickRadius = mCenterX
-            for (tickIndex in 0..11) {
-                val tickRot = (tickIndex.toDouble() * Math.PI * 2.0 / 12).toFloat()
-                val innerX = Math.sin(tickRot.toDouble()).toFloat() * innerTickRadius
-                val innerY = (-Math.cos(tickRot.toDouble())).toFloat() * innerTickRadius
-                val outerX = Math.sin(tickRot.toDouble()).toFloat() * outerTickRadius
-                val outerY = (-Math.cos(tickRot.toDouble())).toFloat() * outerTickRadius
-                canvas.drawLine(mCenterX + innerX, mCenterY + innerY,
-                        mCenterX + outerX, mCenterY + outerY, mTickAndCirclePaint)
-            }*/
-
-            /*
-             * These calculations reflect the rotation in degrees per unit of time, e.g.,
-             * 360 / 60 = 6 and 360 / 12 = 30.
-             */
-            /*val seconds =
-                    mCalendar.get(Calendar.SECOND) + mCalendar.get(Calendar.MILLISECOND) / 1000f
-            val secondsRotation = seconds * 6f
-
-            val minutesRotation = mCalendar.get(Calendar.MINUTE) * 6f
-
-            val hourHandOffset = mCalendar.get(Calendar.MINUTE) / 2f
-            val hoursRotation = mCalendar.get(Calendar.HOUR) * 30 + hourHandOffset*/
-
-            //Fib map
-
+            //Fibonacci time conversion
             var hour = mCalendar.get(Calendar.HOUR_OF_DAY)
             var min = mCalendar.get(Calendar.MINUTE)
             var hourFibMap:IntArray = fibonacciConvert(hour)
@@ -457,27 +426,7 @@ class MyWatchFace : CanvasWatchFaceService() {
                 circle.drawCircle(canvas)
                 i++
             }
-
-            /*
-             * Save the canvas state before we can begin to rotate it.
-             */
             canvas.save()
-
-            /*canvas.rotate(hoursRotation, mCenterX, mCenterY)
-            canvas.drawLine(
-                    mCenterX,
-                    mCenterY - CENTER_GAP_AND_CIRCLE_RADIUS,
-                    mCenterX,
-                    mCenterY - sHourHandLength,
-                    mHourPaint)
-
-            canvas.rotate(minutesRotation - hoursRotation, mCenterX, mCenterY)
-            canvas.drawLine(
-                    mCenterX,
-                    mCenterY - CENTER_GAP_AND_CIRCLE_RADIUS,
-                    mCenterX,
-                    mCenterY - sMinuteHandLength,
-                    mMinutePaint)*/
 
             /*
              * Ensure the "seconds" hand is drawn only when we are in interactive mode.
@@ -485,35 +434,20 @@ class MyWatchFace : CanvasWatchFaceService() {
              */
             //canvas.drawText(hourString, 195f,195f,mTextPaint)
             if (!mAmbient) {
+                if (timeToggle) {
+                    var secondString: String = String.format("%02d", mCalendar.get(Calendar.SECOND))
+                    var minuteString: String = String.format("%02d", mCalendar.get(Calendar.MINUTE))
+                    var hourString: String =
+                        String.format("%02d", mCalendar.get(Calendar.HOUR_OF_DAY))
 
-                if(timeToggle) {
-                    var secondString:String = String.format("%02d", mCalendar.get(Calendar.SECOND))
-                    var minuteString:String = String.format("%02d", mCalendar.get(Calendar.MINUTE))
-                    var hourString:String = String.format("%02d", mCalendar.get(Calendar.HOUR_OF_DAY))
-
-                    var currentTimeString:String = String.format("%s:%s:%s", hourString, minuteString, secondString)
-                    canvas.drawText(currentTimeString, 195f,195f, mTextPaint)
+                    var currentTimeString: String =
+                        String.format("%s:%s:%s", hourString, minuteString, secondString)
+                    canvas.drawText(currentTimeString, 195f, 195f, mTextPaint)
                 } /*else {
                     canvas.drawText(hourString, 195f, 195 - 25f, mTextPaint)
                     canvas.drawText(minuteString, 195f, 195 + 25f, mTextPaint)
                 }*/
-               /* canvas.rotate(secondsRotation - minutesRotation, mCenterX, mCenterY)
-                canvas.drawLine(
-                        mCenterX,
-                        mCenterY - CENTER_GAP_AND_CIRCLE_RADIUS,
-                        mCenterX,
-                        mCenterY - mSecondHandLength,
-                        mSecondPaint)*/
-
             }
-            /*canvas.drawCircle(
-                    mCenterX,
-                    mCenterY,
-                    CENTER_GAP_AND_CIRCLE_RADIUS,
-                    mTickAndCirclePaint)*/
-
-            /* Restore the canvas' original orientation. */
-            //canvas.restore()
         }
 
         override fun onVisibilityChanged(visible: Boolean) {
